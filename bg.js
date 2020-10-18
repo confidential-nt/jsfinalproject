@@ -2,8 +2,8 @@ const bgImg = document.querySelector(".bg-img");
 
 
 function getBgImage(number){
-    const src = `./images/${number + 1}.jpg`
-    bgImg.style.backgroundImage = `url(${src})`
+    const src = `./images/${number + 1}.jpg`;
+    bgImg.style.backgroundImage = `url(${src})`;
 }
 
 function getRandomNumber(){
