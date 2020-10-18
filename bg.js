@@ -1,9 +1,13 @@
 const bgImg = document.querySelector(".bg-img");
 
+const body = document.querySelector("body");
+
 
 function getBgImage(number){
-    const src = `./images/${number + 1}.jpg`
-    bgImg.style.backgroundImage = `url(${src})`
+    const image = new Image();
+    image.src = `./images/${number + 1}.jpg`;
+    image.classList.add("bg-img");
+    body.appendChild(image);
 }
 
 function getRandomNumber(){
