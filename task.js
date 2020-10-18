@@ -12,7 +12,7 @@ const LS_FINISH = "FINISH";
 
 let taskArray = [];
 
-let finishedArray = [];
+// let finishedArray = [];
 
 // let fsdf = [];
 
@@ -40,66 +40,66 @@ function handleDelete(event){
 
 function saveTask(){
     localStorage.setItem(LS_TASK,JSON.stringify(taskArray));
-    localStorage.setItem(LS_FINISH, JSON.stringify(finishedArray));
+    // localStorage.setItem(LS_FINISH, JSON.stringify(finishedArray));
 }
 
-function paintFinishedTask(text){
-    const li = document.createElement("li");
-    const span = document.createElement("span");
-    span.innerText = text;
-    const taskId = finishedArray.length;
-    const delBtn = document.createElement("button");
-    delBtn.innerText = "❌";
-    delBtn.addEventListener("click",handleDelete);
-    li.appendChild(span);
-    li.appendChild(delBtn);
-    li.id = taskId;
-    li.classList.add("dragElement");
-    li.setAttribute("draggable", true);
-    finishUL.appendChild(li);
-    const finishObj = {
-        text: text,
-        id: taskId
-    }
-    finishedArray.push(finishObj);
-    saveTask();
-}
+// function paintFinishedTask(text){
+//     const li = document.createElement("li");
+//     const span = document.createElement("span");
+//     span.innerText = text;
+//     const taskId = finishedArray.length;
+//     const delBtn = document.createElement("button");
+//     delBtn.innerText = "❌";
+//     delBtn.addEventListener("click",handleDelete);
+//     li.appendChild(span);
+//     li.appendChild(delBtn);
+//     li.id = taskId;
+//     li.classList.add("dragElement");
+//     li.setAttribute("draggable", true);
+//     finishUL.appendChild(li);
+//     const finishObj = {
+//         text: text,
+//         id: taskId
+//     }
+//     finishedArray.push(finishObj);
+//     saveTask();
+// }
 
 
-function handleFinishedTask(event){
-    const finishedTask = event.target;
-    console.log(finishedTask.parentNode);
- if(finishedTask.parentNode === finishUL){
-    const cleanArray = taskArray.filter(task => {
-        return task.id !== parseInt(finishedTask.id);
-    })
-    taskArray = cleanArray;
+// function handleFinishedTask(event){
+//     const finishedTask = event.target;
+//     console.log(finishedTask.parentNode);
+//  if(finishedTask.parentNode === finishUL){
+//     const cleanArray = taskArray.filter(task => {
+//         return task.id !== parseInt(finishedTask.id);
+//     })
+//     taskArray = cleanArray;
    
-    // finishUL.appendChild(finishedTask);
-    const finishObj = {
-        text: finishedTask.childNodes[0].innerText,
-        id: finishedTask.id
-    }
-    // paintFinishedTask(finishedTask.childNodes[0].innerText);
-    finishedArray.push(finishObj);
+//     // finishUL.appendChild(finishedTask);
+//     const finishObj = {
+//         text: finishedTask.childNodes[0].innerText,
+//         id: finishedTask.id
+//     }
+//     // paintFinishedTask(finishedTask.childNodes[0].innerText);
+//     finishedArray.push(finishObj);
     
-    saveTask();
- }else{
-     const cleanArray = finishedArray.filter(task => {
-        return task.id !== parseInt(finishedTask.id);
-     })
-     finishedArray = cleanArray;
+//     saveTask();
+//  }else{
+//      const cleanArray = finishedArray.filter(task => {
+//         return task.id !== parseInt(finishedTask.id);
+//      })
+//      finishedArray = cleanArray;
      
 
-     const taskObj = {
-        text: finishedTask.childNodes[0].innerText,
-        id: finishedTask.id
-     }
+//      const taskObj = {
+//         text: finishedTask.childNodes[0].innerText,
+//         id: finishedTask.id
+//      }
 
-     taskArray.push(taskObj);
-     saveTask();
- }
-}
+//      taskArray.push(taskObj);
+//      saveTask();
+//  }
+// }
 
 function paintTask(text){
     const li = document.createElement("li");
