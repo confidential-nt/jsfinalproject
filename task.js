@@ -28,13 +28,13 @@ function handleDelete(event){
     })
     taskArray = cleanArray;
   }
-  if(deletedTask.parentNode == finishUL){
-    finishUL.removeChild(deletedTask);
-    const cleanArray = finishedArray.filter(task => {
-        return task.id !== parseInt(deletedTask.id);
-    })
-    finishedArray = cleanArray;
-  }
+//   if(deletedTask.parentNode == finishUL){
+//     finishUL.removeChild(deletedTask);
+//     const cleanArray = finishedArray.filter(task => {
+//         return task.id !== parseInt(deletedTask.id);
+//     })
+//     finishedArray = cleanArray;
+//   }
     saveTask();
 }
 
