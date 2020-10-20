@@ -1,9 +1,11 @@
 // const taskForm = document.querySelector(".taskForm");
 
 const taskInput = document.querySelector(".task-input");
-
-const taskUL = document.querySelector(".list--taskList");
-const finishUL = document.querySelector(".list--finishList");
+const taskUL = document.querySelector(".list--taskList.dropOrigin");
+const finishUL = document.querySelector(".list--finishList.dropZone");
+const dragElement = document.getElementsByClassName("dragElement");
+// const dropOrigin = document.querySelector(".dropOrigin");
+// const dropZone = document.querySelector(".dropZone");
 
 
 const LS_TASK = "TASK";
@@ -14,13 +16,42 @@ let taskArray = [];
 
 let finishedArray = [];
 
-// let fsdf = [];
+let finish = false;
 
+function dropOriginDropHandler(event){
+    const data = event.dataTransfer.getData("text");
+    const draggableElement = document.getElementById(data);
+    taskUL.appendChild(draggableElement);
+    event.dataTransfer.clearData();
+    finish = false;
+}
 
+function dropZoneDropHandler(event){
+  const data = event.dataTransfer.getData("text");
+  console.log(data);
+  const draggableElement = document.getElementById(data);
+  console.log(draggableElement)
+  console.log(dragElement);
+  finishUL.appendChild(draggableElement);
+  event.dataTransfer.clearData();
+  finish = true;
+}
+
+function dragOverHandler(event){
+    
+    event.preventDefault();
+}
+
+function dragStartHandler(event){
+    console.log(event);
+    event.dataTransfer.setData("text/plain", event.target.id);
+    
+}
 
 function handleDelete(event){
     const selectedBtn = event.target;
     const deletedTask = selectedBtn.parentNode;
+    console.log(deletedTask.parentNode);
   if(deletedTask.parentNode == taskUL){
     taskUL.removeChild(deletedTask);
     const cleanArray = taskArray.filter(task => {
@@ -28,7 +59,7 @@ function handleDelete(event){
     })
     taskArray = cleanArray;
   }
-  if(deletedTask.parentNode == finishUL){
+  else{
     finishUL.removeChild(deletedTask);
     const cleanArray = finishedArray.filter(task => {
         return task.id !== parseInt(deletedTask.id);
@@ -45,6 +76,8 @@ function saveTask(){
 
 function paintFinishedTask(text){
     const li = document.createElement("li");
+    li.classList.add("dragElement");
+    li.setAttribute("draggable", true);
     const span = document.createElement("span");
     span.innerText = text;
     const taskId = finishedArray.length;
@@ -54,8 +87,7 @@ function paintFinishedTask(text){
     li.appendChild(span);
     li.appendChild(delBtn);
     li.id = taskId;
-    li.classList.add("dragElement");
-    li.setAttribute("draggable", true);
+    
     finishUL.appendChild(li);
     const finishObj = {
         text: text,
@@ -66,39 +98,31 @@ function paintFinishedTask(text){
 }
 
 
-function handleFinishedTask(event){
-    const finishedTask = event.target;
-    console.log(finishedTask.parentNode);
- if(finishedTask.parentNode === finishUL){
+function handleFinishedTask(e){
+    const draggedElement = e.target;
+    console.log(draggedElement)
+   if(finish === false){
+    const cleanArray = finishedArray.filter(task => {
+        return task.id !== parseInt(draggedElement.id);
+    })
+    finishedArray= cleanArray;
+    const taskObj = {
+        text: draggedElement.childNodes[0].innerText,
+        id: taskArray.length
+    }
+    taskArray.push(taskObj)
+   }else{
     const cleanArray = taskArray.filter(task => {
-        return task.id !== parseInt(finishedTask.id);
+        return task.id !== parseInt(draggedElement.id);
     })
     taskArray = cleanArray;
-   
-    // finishUL.appendChild(finishedTask);
     const finishObj = {
-        text: finishedTask.childNodes[0].innerText,
-        id: finishedTask.id
+        text: draggedElement.childNodes[0].innerText,
+        id: finishedArray.length
     }
-    // paintFinishedTask(finishedTask.childNodes[0].innerText);
     finishedArray.push(finishObj);
-    
-    saveTask();
- }else{
-     const cleanArray = finishedArray.filter(task => {
-        return task.id !== parseInt(finishedTask.id);
-     })
-     finishedArray = cleanArray;
-     
-
-     const taskObj = {
-        text: finishedTask.childNodes[0].innerText,
-        id: finishedTask.id
-     }
-
-     taskArray.push(taskObj);
-     saveTask();
- }
+   }
+   saveTask();
 }
 
 function paintTask(text){
@@ -150,9 +174,22 @@ function detectTask(){
     }
 }
 
+function dragAndDrop(){
+  Array.from(dragElement).forEach((element) => {
+  element.addEventListener("dragstart", dragStartHandler)
+  element.addEventListener("dragend",handleFinishedTask)  
+});
+  finishUL.addEventListener("dragover", dragOverHandler);
+  finishUL.addEventListener("drop", dropZoneDropHandler);
+  taskUL.addEventListener("dragover", dragOverHandler);
+  taskUL.addEventListener("drop", dropOriginDropHandler);
+}
+
 function init(){
+    
     taskForm.addEventListener("submit",handleSubmit);
     detectTask();
+    dragAndDrop();
     
 }
 
