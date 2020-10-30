@@ -7,7 +7,7 @@ function getBgImage(number){
 }
 
 function getRandomNumber(){
-    const number = Math.floor(Math.random()*10)
+    const number = Math.floor(Math.random()*10);
     return number;    
 }
 
