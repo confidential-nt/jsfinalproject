@@ -11,7 +11,7 @@ const LS_FINISH = "FINISH";
 
 let taskArray = [];
 
-// let finishedArray = [];
+let finishedArray = [];
 
 
 
