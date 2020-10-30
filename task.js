@@ -1,9 +1,8 @@
-// const taskForm = document.querySelector(".taskForm");
 
 const taskInput = document.querySelector(".task-input");
-
-const taskUL = document.querySelector(".list--taskList");
-const finishUL = document.querySelector(".list--finishList");
+const taskUL = document.querySelector(".list--taskList.dropOrigin");
+const finishUL = document.querySelector(".list--finishList.dropZone");
+const dragElement = document.getElementsByClassName("dragElement");
 
 
 const LS_TASK = "TASK";
@@ -14,9 +13,32 @@ let taskArray = [];
 
 // let finishedArray = [];
 
-// let fsdf = [];
 
 
+function dropOriginDropHandler(event){
+    const data = event.dataTransfer.getData("text");
+    const draggableElement = document.getElementById(data);
+    taskUL.appendChild(draggableElement);
+    handleFinishedTask(data, draggableElement);
+    event.dataTransfer.clearData();  
+}
+
+function dropZoneDropHandler(event){
+  const data = event.dataTransfer.getData("text");
+  const draggableElement = document.getElementById(data);
+  finishUL.appendChild(draggableElement);
+  handleFinishedTask(data, draggableElement);
+  event.dataTransfer.clearData();
+
+}
+
+function dragOverHandler(event){
+    event.preventDefault();
+}
+
+function dragStartHandler(event){
+    event.dataTransfer.setData("text/plain", event.target.id); 
+}
 
 function handleDelete(event){
     const selectedBtn = event.target;
@@ -28,84 +50,82 @@ function handleDelete(event){
     })
     taskArray = cleanArray;
   }
-//   if(deletedTask.parentNode == finishUL){
-//     finishUL.removeChild(deletedTask);
-//     const cleanArray = finishedArray.filter(task => {
-//         return task.id !== parseInt(deletedTask.id);
-//     })
-//     finishedArray = cleanArray;
-//   }
+  else{
+    finishUL.removeChild(deletedTask);
+    const cleanArray = finishedArray.filter(task => {
+        return task.id !== parseInt(deletedTask.id);
+    })
+    finishedArray = cleanArray;
+  }
     saveTask();
 }
 
 function saveTask(){
     localStorage.setItem(LS_TASK,JSON.stringify(taskArray));
-    // localStorage.setItem(LS_FINISH, JSON.stringify(finishedArray));
+    localStorage.setItem(LS_FINISH, JSON.stringify(finishedArray));
 }
 
-// function paintFinishedTask(text){
-//     const li = document.createElement("li");
-//     const span = document.createElement("span");
-//     span.innerText = text;
-//     const taskId = finishedArray.length;
-//     const delBtn = document.createElement("button");
-//     delBtn.innerText = "❌";
-//     delBtn.addEventListener("click",handleDelete);
-//     li.appendChild(span);
-//     li.appendChild(delBtn);
-//     li.id = taskId;
-//     li.classList.add("dragElement");
-//     li.setAttribute("draggable", true);
-//     finishUL.appendChild(li);
-//     const finishObj = {
-//         text: text,
-//         id: taskId
-//     }
-//     finishedArray.push(finishObj);
-//     saveTask();
-// }
-
-
-// function handleFinishedTask(event){
-//     const finishedTask = event.target;
-//     console.log(finishedTask.parentNode);
-//  if(finishedTask.parentNode === finishUL){
-//     const cleanArray = taskArray.filter(task => {
-//         return task.id !== parseInt(finishedTask.id);
-//     })
-//     taskArray = cleanArray;
-   
-//     // finishUL.appendChild(finishedTask);
-//     const finishObj = {
-//         text: finishedTask.childNodes[0].innerText,
-//         id: finishedTask.id
-//     }
-//     // paintFinishedTask(finishedTask.childNodes[0].innerText);
-//     finishedArray.push(finishObj);
+function paintFinishedTask(text){
+    const li = document.createElement("li");
+    li.classList.add("dragElement");
+    li.setAttribute("draggable", true);
+    const span = document.createElement("span");
+    span.innerText = text;
+    const taskId = (finishedArray.length + 1)*10;
+    const delBtn = document.createElement("button");
+    delBtn.innerText = "❌";
+    delBtn.addEventListener("click",handleDelete);
+    li.appendChild(span);
+    li.appendChild(delBtn);
+    li.id = taskId;
     
-//     saveTask();
-//  }else{
-//      const cleanArray = finishedArray.filter(task => {
-//         return task.id !== parseInt(finishedTask.id);
-//      })
-//      finishedArray = cleanArray;
-     
+    finishUL.appendChild(li);
+    const finishObj = {
+        text: text,
+        id: taskId
+    }
+    finishedArray.push(finishObj);
+    dragAndDrop();
+    saveTask();
+}
 
-//      const taskObj = {
-//         text: finishedTask.childNodes[0].innerText,
-//         id: finishedTask.id
-//      }
 
-//      taskArray.push(taskObj);
-//      saveTask();
-//  }
-// }
+function handleFinishedTask(data, draggableElement){
+
+   if(draggableElement.parentNode === taskUL){
+    const cleanArray = finishedArray.filter(task => {
+        return task.id !== parseInt(data);
+    })
+    finishedArray= cleanArray;
+    const taskObj = {
+        text: draggableElement.childNodes[0].innerText,
+        id: taskArray.length + 1
+    }
+    taskArray.push(taskObj)
+    draggableElement.id = taskArray.length;
+   }else if(draggableElement.parentNode === finishUL){
+    const cleanArray = taskArray.filter(task => {
+        return task.id !== parseInt(data);
+    })
+   
+    taskArray = cleanArray;
+
+    const finishObj = {
+        text: draggableElement.childNodes[0].innerText,
+        id: (finishedArray.length + 1)*10
+    }
+    finishedArray.push(finishObj);
+    draggableElement.id = finishedArray.length*10;
+   }
+   
+   saveTask();
+}
 
 function paintTask(text){
     const li = document.createElement("li");
     const span = document.createElement("span");
     span.innerText = text;
-    const taskId = taskArray.length;
+    const taskId = taskArray.length + 1;
     const delBtn = document.createElement("button");
     delBtn.innerText = "❌";
     delBtn.addEventListener("click",handleDelete);
@@ -120,14 +140,12 @@ function paintTask(text){
         id: taskId
     }
     taskArray.push(taskObj)
-    // fsdf.push(li);
-    // console.log(fsdf)
+    dragAndDrop();
     saveTask();
 }
 
 function handleSubmit(event){
     event.preventDefault();
-   
     const taskText = taskInput.value;
     paintTask(taskText);
     taskInput.value = "";
@@ -150,10 +168,19 @@ function detectTask(){
     }
 }
 
+function dragAndDrop(){
+  Array.from(dragElement).forEach((element) => {
+  element.addEventListener("dragstart", dragStartHandler)
+});
+  finishUL.addEventListener("dragover", dragOverHandler);
+  finishUL.addEventListener("drop", dropZoneDropHandler);
+  taskUL.addEventListener("dragover", dragOverHandler);
+  taskUL.addEventListener("drop", dropOriginDropHandler);
+}
+
 function init(){
     taskForm.addEventListener("submit",handleSubmit);
     detectTask();
-    
 }
 
 init();
