@@ -2,12 +2,12 @@ const bgImg = document.querySelector(".bg-img");
 
 
 function getBgImage(number){
-    const src = `./images/${number + 1}.jpg`;
+    const src = `./pictures/${number + 1}.jpg`;
     bgImg.style.backgroundImage = `url(${src})`;
 }
 
 function getRandomNumber(){
-    const number = Math.floor(Math.random()*5)
+    const number = Math.floor(Math.random()*10)
     return number;    
 }
 
